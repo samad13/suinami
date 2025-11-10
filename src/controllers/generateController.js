@@ -219,7 +219,7 @@ export const generateThread = async (req, res) => {
 `;
 
   const userPrompt = `Generate content for this project name: "${name}".
-Determine what kind of Sui project it is (DeFi, AI, MPC, Wallet, Infrastructure, Staking, Analytics, Community, Exchanges, Token, NFT, Storage etc...),
+Determine what kind of Sui project it is (DeFi, AI, MPC, Wallet, Infrastructure, Staking, Analytics, Community,Data Markets, Exchanges, Token, NFT, Storage etc...),
 then write tweet(s) accordingly.
 Project: ${name}
 Twitter: ${twitterHandle}
@@ -269,6 +269,7 @@ Parts: ${numTweets}`;
           { role: "user", content: userPrompt },
         ],
         temperature: temp,
+        max_tokens: 500
       });
 
       const content = response.choices[0].message.content;
@@ -298,6 +299,24 @@ Parts: ${numTweets}`;
     res.json({ success: true, tweets });
   } catch (err) {
     console.error("AI Generation Error:", err);
+    // ✅ Automatic fallback to Gemini if OpenAI rate limits
+  if (err.code === "rate_limit_exceeded") {
+    console.log("⚠️ OpenAI rate limit hit — retrying with Gemini...");
+    try {
+      const result = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: [{ role: "user", parts: [{ text: "Retry: " + req.body.name }] }],
+        config: {
+          temperature: 0.8,
+          systemInstruction: "Generate 1 tweet about " + req.body.name,
+        },
+      });
+      const fallbackText = result.text.trim();
+      return res.json({ success: true, tweets: [fallbackText] });
+    } catch (geminiErr) {
+      console.error("Fallback Gemini Error:", geminiErr);
+    }
+  }
     res.status(500).json({ error: "Failed to generate content" });
   }
 };
