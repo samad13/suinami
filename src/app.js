@@ -7,7 +7,7 @@ import generateRoutes from "./routes/generateRoutes.js";
 dotenv.config();
 
 const app = express();
-const frontendUrl = process.env.FRONTEND_URL || 'https://repeasyy.vercel.app/';
+const frontendUrl = process.env.FRONTEND_URL || 'https://repeasyy.vercel.app';
 
 app.use(cors({
   origin: frontendUrl
