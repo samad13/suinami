@@ -5,7 +5,8 @@ import { getRandomAspect } from "../config/sui_aspects.js";
 import { getRandomTemperature } from "../config/ai_temprature.js";
 
 
-const retry = async (fn, retries = 5, delay = 2000) => {
+
+const retry = async (fn, retries = 5, delay = 800) => {
   for (let i = 0; i < retries; i++) {
     try {
       return await fn();
@@ -86,12 +87,11 @@ export const generateThread = async (req, res) => {
 6. **NEVER** add explanations, disclaimers, or markdown — output **ONLY the tweet(s)**
 7. Keep tone **casual, hype, and community-focused** — like a real builder on Crypto Twitter
 8. Focus on the **"${aspect.id}"** aspect of the project: ${aspect.description}
-9. dont make mistake calling what is not storage as storage. if its not a storage project dont call it storage.
-10. ✅ Label each tweet clearly as:
+9. ✅ Label each tweet clearly as:
    "Tweet 1: ..."
    "Tweet 2: ..."
    etc.
-11. Do not separate tweets with extra newlines — each tweet should be a single paragraph ending with hashtags.
+10. Do not separate tweets with extra newlines — each tweet should be a single paragraph ending with hashtags.
 `;
 
   const userPrompt = `Generate content for this project name: "${name}".
