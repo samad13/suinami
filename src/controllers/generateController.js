@@ -5,7 +5,7 @@ import { getRandomAspect } from "../config/sui_aspects.js";
 import { getRandomTemperature } from "../config/ai_temprature.js";
 
 
-const retry = async (fn, retries = 5, delay = 1000) => {
+const retry = async (fn, retries = 5, delay = 2000) => {
   for (let i = 0; i < retries; i++) {
     try {
       return await fn();
