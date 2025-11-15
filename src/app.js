@@ -16,8 +16,8 @@ if (allowedOriginsString) {
   allowedOrigins = allowedOriginsString.split(',').map(url => url.trim()).filter(url => url !== '');
 } else {
   // Fallback if FRONTEND_URLS is not set, e.g., for development
-  allowedOrigins = ['http://localhost:5173']; 
-  console.warn("FRONTEND_URLS environment variable not set. Defaulting to ['http://localhost:5173'].");
+  allowedOrigins = ['https://repeasyy.vercel.app']; 
+  console.warn("FRONTEND_URLS environment variable not set. Defaulting to ['https://repeasyy.vercel.app'].");
 }
 
 app.use(cors({
