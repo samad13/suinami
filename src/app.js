@@ -9,33 +9,28 @@ dotenv.config();
 const app = express();
 
 
-const allowedOriginsString = process.env.FRONTEND_URLS;
-
-let allowedOrigins;
-if (allowedOriginsString) {
-  allowedOrigins = allowedOriginsString.split(',').map(url => url.trim()).filter(url => url !== '');
-} else {
-  // Fallback if FRONTEND_URLS is not set, e.g., for development
-  allowedOrigins = ['https://repeasyy.vercel.app']; 
-  console.warn("FRONTEND_URLS environment variable not set. Defaulting to ['https://repeasyy.vercel.app'].");
-}
+const allowedOrigins = process.env.FRONTEND_URLS 
+  ? process.env.FRONTEND_URLS.split(',').map(url => url.trim())
+  : ['https://repeasyy.vercel.app']; 
 
 app.use(cors({
-  origin: function (origin, callback) {
-   
+  origin: (origin, callback) => {
+    
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = `The CORS policy for this site does not allow access from the specified origin: ${origin}`;
-      return callback(new Error(msg), false);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
     }
-    return callback(null, true);
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
-  credentials: true,
-  optionsSuccessStatus: 204 
-}));
+    
 
+    callback(new Error(`CORS: Origin ${origin} not allowed`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200
+}));
 // const frontendUrl = process.env.FRONTEND_URL || 'https://repeasyy.vercel.app';
 
 // app.use(cors({
