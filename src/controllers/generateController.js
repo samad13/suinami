@@ -1,4 +1,5 @@
-import openai from "../config/openai.js";
+//import openai from "../config/openai.js";
+import { getOpenAIClient } from "../config/openai.js";
 import ai from "../config/gemini.js";
 import { getRandomPersona } from "../config/sui_personas.js";
 import { getRandomAspect } from "../config/sui_aspects.js";
@@ -103,7 +104,7 @@ Parts: ${numTweets}`;
 
 // Unified AI call wrapper
   const callAI = async () => {
-    const useGemini = Math.random() < 0.5;
+    const useGemini = Math.random() < 0.2;
     if (useGemini) {
       console.log("🤖 Trying Gemini...");
       const result = await ai.models.generateContent({
@@ -113,7 +114,9 @@ Parts: ${numTweets}`;
       });
       return result.text;
     } else {
-      console.log("🧠 Trying OpenAI...");
+      console.log("Trying OpenAI with a rotating key...");
+          const openai = getOpenAIClient();
+    
       const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
@@ -151,10 +154,10 @@ Parts: ${numTweets}`;
     try {
       const result = await ai.models.generateContent({
         model: "gemini-2.5-flash",
-        contents: [{ role: "user", parts: [{ text: "Retry: " + req.body.name }] }],
+        contents: [{ role: "user",  parts: [{ text: userPrompt }] }],
         config: {
-          temperature: 0.8,
-          systemInstruction: "Generate 1 tweet about " + req.body.name,
+        temperature: temp,
+        systemInstruction: systemPrompt,
         },
       });
       const fallbackText = result.text.trim();
