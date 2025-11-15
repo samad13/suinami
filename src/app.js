@@ -9,34 +9,17 @@ dotenv.config();
 const app = express();
 
 
-const allowedOrigins = process.env.FRONTEND_URLS 
-  ? process.env.FRONTEND_URLS.split(',').map(url => url.trim())
-  : ['https://repeasyy.vercel.app']; 
+
+// const FRONTEND_URLS = process.env.FRONTEND_URL || 'https://repeasyy.vercel.app';
 
 app.use(cors({
-  origin: (origin, callback) => {
-    
-    if (!origin) return callback(null, true);
-    
-    
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    
-
-    callback(new Error(`CORS: Origin ${origin} not allowed`));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 200
+  origin: [
+    'https://repeasyy.vercel.app',
+    'https://repeasy.vercel.app', 
+    'http://localhost:5173'
+  ],
+  credentials: true
 }));
-// const frontendUrl = process.env.FRONTEND_URL || 'https://repeasyy.vercel.app';
-
-// app.use(cors({
-//   origin: frontendUrl
-// }));
-
 
 app.use(express.json());
 
