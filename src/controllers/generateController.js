@@ -5,6 +5,8 @@ import { getRandomPersona } from "../config/sui_personas.js";
 import { getRandomAspect } from "../config/sui_aspects.js";
 import { getRandomTemperature } from "../config/ai_temprature.js";
 
+import Analytics from "../models/Analytics.js";
+
 
 
 const retry = async (fn, retries = 5, delay = 800) => {
@@ -131,6 +133,44 @@ Parts: ${numTweets}`;
   };
 
   try {
+// --- ANALYTICS COLLECTION ---- //
+const ip =
+  req.headers["x-forwarded-for"]?.split(",")[0] ||
+  req.connection.remoteAddress || req.ip;
+
+const userAgent = req.headers["user-agent"];
+
+
+let location = "Unknown";
+
+try {
+  if (ip === "::1" || ip === "127.0.0.1" || ip.includes("::ffff:127")) {
+    location = "Localhost (No Geo)";
+  } else {
+  const ipResp = await fetch(`https://ipapi.co/${ip}/json/`);
+  const ipData = await ipResp.json();
+
+  if (ipData && ipData.country_name) {
+    location = `${ipData.city}, ${ipData.region}, ${ipData.country_name}`;
+  }}
+} catch (err) {
+  console.log("Location lookup failed");
+}
+
+
+await Analytics.create({
+  name,
+  twitterHandle,
+  tweetType,
+  maxGeneration: maxGenNum,
+  ip,
+  userAgent,
+  location
+});
+
+
+
+
     let text = await retry(callAI, 5);
 
     // Split tweets cleanly

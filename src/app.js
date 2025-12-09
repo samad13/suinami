@@ -3,14 +3,13 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import generateRoutes from "./routes/generateRoutes.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js";
 
 dotenv.config();
 
 const app = express();
 
 
-
-// const FRONTEND_URLS = process.env.FRONTEND_URL || 'https://repeasyy.vercel.app';
 
 app.use(cors({
   origin: [
@@ -20,6 +19,7 @@ app.use(cors({
   ],
   credentials: true
 }));
+app.set("trust proxy", true);
 
 app.use(express.json());
 
@@ -28,6 +28,7 @@ app.get("/", (req, res) => {
 }); 
 
 app.use("/api/generate", generateRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 
 export default app;
