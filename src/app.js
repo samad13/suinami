@@ -13,6 +13,7 @@ const app = express();
 
 app.use(cors({
   origin: [
+    'https://repeasy.wal.app', 
     'https://repeasyy.vercel.app',
     'https://repeasy.vercel.app', 
     'http://localhost:5173'
